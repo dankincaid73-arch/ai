@@ -4,6 +4,7 @@ This module extracts text from PDF files and chunks the data
 in memory to prepare for vectorization.
 """
 
+import os
 import fitz  # PyMuPDF
 
 
@@ -68,15 +69,24 @@ def run_poc(file_path: str):
 
     # 2. Chunking
     all_chunks = []
+    filename = os.path.basename(file_path)
+
     for page in pages:
         page_chunks = chunk_text(page["text"])
         for i, chunk in enumerate(page_chunks):
+            # Inject context directly into the text the LLM will read
+            page_num = page["page_number"]
+            chunk_text_val = f"[Source: {filename}, Page: {page_num}]\n{chunk}"
+
+            # Format preview on a separate line to satisfy Flake8
+            preview = chunk_text_val[:100].replace("\n", " ") + "..."
+
             all_chunks.append(
                 {
-                    "page_number": page["page_number"],
+                    "page_number": page_num,
                     "chunk_index": i + 1,
-                    "text_preview": chunk[:100].replace("\n", " ") + "...",
-                    "length": len(chunk),
+                    "text_preview": preview,
+                    "length": len(chunk_text_val),
                 }
             )
 
@@ -98,5 +108,5 @@ def run_poc(file_path: str):
 
 if __name__ == "__main__":
     # Pointing to the Attention Is All You Need paper
-    test_pdf = "./data/raw/pdf/1706.03762v7.pdf"
+    test_pdf = "../../../data/raw/pdf/1706.03762v7.pdf"
     run_poc(test_pdf)

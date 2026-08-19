@@ -2,6 +2,13 @@
 
 All notable changes to **Project Tarantula V1.0** will be documented in this file.
 
+## [1.1.15] - 2026-08-18
+### Changed
+- **Contextual PDF Ingestion:** Upgraded `pdf_ingestion.py` and `test_pdf_ingestion.py` to inject source metadata (`[Source: filename, Page: X]`) directly into text chunks, improving LLM citation accuracy and grounding for the local RAG pipeline.
+
+### Fixed
+- **Code Quality:** Resolved Flake8 (`E501`) line-length violations and auto-formatter conflicts within the text chunking loops by extracting string manipulation logic into dedicated variables
+
 ## [1.1.14] - 2026-06-26
 ### Added
 - **Production URL Ingestion:** Finalized `url_ingestion.py` integrating Playwright for headless HTML text extraction, LangChain's `RecursiveCharacterTextSplitter` for semantic token chunking, and direct payload insertion into ChromaDB.

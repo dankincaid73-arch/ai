@@ -22,17 +22,19 @@ full_path = os.path.join(PROJECT_ROOT, raw_chroma_path)
 LOCKED_CHROMA_PATH = os.path.abspath(full_path)
 
 
-def extract_pdf_text(file_path: str) -> str:
-    """Extracts raw text from a PDF file page by page."""
-    text_content = []
+def extract_pdf_pages(file_path: str) -> list[dict]:
+    """Extracts raw text from a PDF, preserving page numbers."""
+    pages_data = []
     try:
         with fitz.open(file_path) as doc:
-            for page in doc:
-                text_content.append(page.get_text())
-        return "\n".join(text_content)
+            for page_num, page in enumerate(doc):
+                text = page.get_text().strip()
+                if text:
+                    pages_data.append({"text": text, "page": page_num + 1})
+        return pages_data
     except Exception as e:
         print(f"❌ Error reading PDF {file_path}: {e}")
-        return ""
+        return []
 
 
 def process_pdf_pipeline(file_path: str):
@@ -60,38 +62,57 @@ def process_pdf_pipeline(file_path: str):
         track_ingestion.mark_as_completed(doc_id)
         return
 
-    # 4. Extract the raw data
+    # 4. Extract the raw data (per page)
     print(f"⏳ Extracting text from: {file_path}")
-    raw_text = extract_pdf_text(file_path)
+    filename = os.path.basename(file_path)
+    pages_data = extract_pdf_pages(file_path)
 
-    if not raw_text.strip():
+    if not pages_data:
         print(f"⚠️ No text from {file_path}. Aborting.")
         return
 
-    # 5. Chunk text using Langchain Splitter
-    print("⏳ Chunking text...")
+    # 5. Chunk text and enrich context
+    print("⏳ Chunking text and enriching context...")
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=800, chunk_overlap=100, length_function=len
     )
-    chunks = splitter.split_text(raw_text)
 
-    if not chunks:
+    final_chunks = []
+    metadatas = []
+    ids = []
+    chunk_counter = 0
+
+    for page in pages_data:
+        page_chunks = splitter.split_text(page["text"])
+
+        for chunk in page_chunks:
+            # Inject context directly into the text the LLM will read
+            page_num = page["page"]
+            chunk_text = f"[Source: {filename}, Page: {page_num}]\n{chunk}"
+
+            final_chunks.append(chunk_text)
+            metadatas.append(
+                {
+                    "doc_id": doc_id,
+                    "filename": filename,
+                    "page": page_num,
+                    "chunk_index": chunk_counter,
+                }
+            )
+            ids.append(f"{doc_id}_{chunk_counter}")
+            chunk_counter += 1
+
+    if not final_chunks:
         print("⚠️ No chunks generated. Aborting.")
         return
 
-    # 6. Prepare ChromaDB payloads
-    ids = [f"{doc_id}_{i}" for i in range(len(chunks))]
-    metadatas = []
-    for i in range(len(chunks)):
-        metadatas.append({"doc_id": doc_id, "chunk_index": i})
+    # 6. Push to ChromaDB
+    print(f"⏳ Pushing {len(final_chunks)} chunks to ChromaDB...")
+    collection.add(documents=final_chunks, ids=ids, metadatas=metadatas)
 
-    # 7. Push to ChromaDB
-    print(f"⏳ Pushing {len(chunks)} chunks to ChromaDB...")
-    collection.add(documents=chunks, ids=ids, metadatas=metadatas)
-
-    # 8. Complete tracking
+    # 7. Complete tracking
     track_ingestion.mark_as_completed(doc_id)
-    print(f"✅ Ingested {len(chunks)} chunks. Complete for: {doc_id}")
+    print(f"✅ Ingested {len(final_chunks)} chunks. Complete for: {doc_id}")
 
 
 if __name__ == "__main__":
