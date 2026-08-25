@@ -19,3 +19,9 @@ __pycache__/
 
 #commands
 commands.txt
+
+#Structure Files
+project_structure.txt
+
+#ONNX Model Cache
+model_cache/
