@@ -2,6 +2,11 @@
 
 All notable changes to **Project Tarantula V1.0** will be documented in this file.
 
+## [1.1.16] - 2026-08-25
+### Added
+- **Diagnostic Tooling:** Added `scripts/check_mongo.py` to query and verify operational master records and tracking metadata in MongoDB.
+- **Vector Audit Utilities:** Added `inspect_chroma.py` to validate active chunk counts, collection states, and vector index consistency within ChromaDB.
+
 ## [1.1.15] - 2026-08-18
 ### Changed
 - **Contextual PDF Ingestion:** Upgraded `pdf_ingestion.py` and `test_pdf_ingestion.py` to inject source metadata (`[Source: filename, Page: X]`) directly into text chunks, improving LLM citation accuracy and grounding for the local RAG pipeline.

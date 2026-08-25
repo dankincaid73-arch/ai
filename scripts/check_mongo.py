@@ -11,7 +11,7 @@ def get_mongo_uri():
     """Constructs the secure MongoDB URI."""
     user = urllib.parse.quote_plus(os.getenv("MONGO_USER", ""))
     password = urllib.parse.quote_plus(os.getenv("MONGO_PASS", ""))
-    host = os.getenv("MONGO_HOST", "localhost:27017")
+    host = os.getenv("MONGO_HOST", "mongodb:27017")
 
     if user and password:
         return f"mongodb://{user}:{password}@{host}/?authSource=admin"
