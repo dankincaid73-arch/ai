@@ -1,0 +1,32 @@
+# Virtual Environment
+venv/
+
+# Python Cache and Bytecode
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local Database (Mount this as a volume instead of baking it into the image)
+chroma_data/
+
+# Media, Demos, and Project Assets (Unnecessary bloat for the container)
+demos/
+images/
+
+# Documentation and Notes
+commands.txt
+project_structure.txt
+CHANGELOG.md
+README.md
+
+# Tests (Omit for a lean production image)
+tests/
+
+# Git tracking
+.git
+.gitignore
+
+# ONNX Model Cache
+model_cache/

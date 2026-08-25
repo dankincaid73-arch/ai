@@ -2,6 +2,16 @@
 
 All notable changes to **Project Tarantula V1.0** will be documented in this file.
 
+## [1.1.17] - 2026-08-25
+### Added
+- **Containerization Scaffolding:** Implemented a `Dockerfile` utilizing a lightweight Python 3.11-slim base image, configured to install Playwright dependencies and keep the container running in the background for script execution.
+- **Service Orchestration:** Added a `docker-compose.yml` file to orchestrate the core Tarantula stack, linking the Python application container to MongoDB, ChromaDB, and Ollama via a dedicated `tarantula_net` bridge network.
+- **Environment Security:** Included a `.dockerignore` and `.gitignore` file to prevent heavy cache directories (like model weights) and sensitive credentials from entering version control or the Docker build context.
+- **Configuration Templating:** Added an `.env.example` file to standardize environment variable deployments across local systems.
+
+### Changed
+- **Automated Bootstrapping:** Upgraded `main.py` with an `auto_ingest_samples` initialization routine. The system now automatically checks ChromaDB on startup and seamlessly ingests target PDF, text, and URL data into the vector store if the collection is empty.
+
 ## [1.1.16] - 2026-08-25
 ### Added
 - **Diagnostic Tooling:** Added `scripts/check_mongo.py` to query and verify operational master records and tracking metadata in MongoDB.
@@ -141,8 +151,8 @@ All notable changes to **Project Tarantula V1.0** will be documented in this fil
 - **Local Inference:** Integrated local LLM support, allowing synthesis of retrieved context without external API dependencies.
 
 ### Fixed
-- **Code Quality:** Refactored `query_engine.py` to strictly adhere to PEP 8/Flake8 linting standards[cite: 1.
-- **Error Handling:** Added local model existence verification to catch 404 response errors during Ollama communication[cite: 1.
+- **Code Quality:** Refactored `query_engine.py` to strictly adhere to PEP 8/Flake8 linting standards.
+- **Error Handling:** Added local model existence verification to catch 404 response errors during Ollama communication.
 
 ## [1.1.0] - 2026-06-05
 ### Added

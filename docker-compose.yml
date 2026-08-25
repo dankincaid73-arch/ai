@@ -1,0 +1,65 @@
+
+services:
+  # The Python Application Container
+  app:
+    build: .
+    container_name: tarantula_app
+    restart: on-failure
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+      - ./model_cache:/root/.cache/chroma
+    depends_on:
+      - mongodb
+      - chromadb
+      - ollama
+    networks:
+      - tarantula_net
+
+  # The MongoDB Container
+  mongodb:
+    image: mongo:latest
+    container_name: tarantula_mongo
+    ports:
+      - "27018:27018"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS}
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - tarantula_net
+
+  # The ChromaDB Container
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: tarantula_chroma
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+    networks:
+      - tarantula_net
+
+  # The Ollama AI Engine Container
+  ollama:
+    image: ollama/ollama:latest
+    container_name: tarantula_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - tarantula_net
+
+volumes:
+  mongo_data:
+  ollama_data:
+
+networks:
+  tarantula_net:
+    driver: bridge
