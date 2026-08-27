@@ -2,6 +2,11 @@
 
 All notable changes to **Project Tarantula V1.0** will be documented in this file.
 
+## [1.1.18] - 2026-08-26
+### Added
+- **Quick-Start Guide:** Added step-by-step instructions covering environment cloning, `.env` setup, Docker container orchestration, and CLI execution.
+- **RAG Testing & Playbook:** Documented the first-run auto-ingestion flow (PDF, text, and web scrapers), custom metadata extraction highlights, and a curated list of sample verification prompts for the query engine.
+
 ## [1.1.17] - 2026-08-25
 ### Added
 - **Containerization Scaffolding:** Implemented a `Dockerfile` utilizing a lightweight Python 3.11-slim base image, configured to install Playwright dependencies and keep the container running in the background for script execution.

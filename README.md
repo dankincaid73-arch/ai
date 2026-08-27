@@ -1,6 +1,81 @@
-# AI Infant to AI Terminator: A Journey in Local Optimization
+# Tarantula: AI Infant to AI Terminator
 
-## Introduction
+## 🚀 Quick Start Guide
+Tarantula is built to run entirely inside Docker, keeping your local machine clean while managing the database, vector storage, and AI inference engine. 
+
+### ⚙️ Prerequisites
+Before running Tarantula, ensure your local environment has the following:
+* **Docker** (and Docker Compose) running on your machine.
+* **Git** installed for version control.
+
+---
+
+**1. Clone the Repository**
+Pull the code to your local machine and navigate into the project directory.
+~~~bash
+git clone https://github.com/dankincaid73AI/ai.git
+cd ai
+~~~
+
+**2. Configure the Environment**
+Tarantula requires environment variables for configuration. Create your local `.env` file by renaming the provided example template.
+~~~bash
+cp .env.example .env
+~~~
+*(Alternatively, you can manually rename `.env.example` to `.env` in your file explorer).*
+
+**3. Launch the Containers**
+Use Docker Compose to build the application and start the backend services (MongoDB, ChromaDB, and Ollama). 
+~~~bash
+docker compose up -d --build
+~~~
+
+**4. Start the Application Interface**
+Because the main application container runs in the background, you interact with the AI by executing the command-line interface script directly inside the running container:
+~~~bash
+docker exec -it tarantula_app python main.py
+~~~
+*(Note: On first run, the system will automatically pull the necessary LLM models and ingest sample data if your database is empty.)*
+
+### 🖥️ What to Expect on First Run
+
+When you execute the `main.py` script, the application handles its own initialization sequence before handing over control:
+
+1. **Auto-Ingestion & Verification:** The system first checks the ChromaDB vector store. If the database is empty, Tarantula will automatically process and ingest a set of sample documents (a PDF, a text file, and a web scrape) to populate the RAG pipeline. On subsequent runs, it will simply verify the existing chunks and bypass ingestion.
+2. **Persona Selection:** You will be prompted to select an interaction style for the AI (e.g., Default Research Assistant, Angry Old Man, etc.), demonstrating dynamic system prompting.
+3. **The Query Engine:** Once initialized, you will enter the main loop where you can query the locally hosted vector data. Type `quit` or `exit` at any time to shut down the engine.
+
+### 🔍 Querying the Engine (RAG in Action)
+
+Once initialization is complete, Tarantula's vector database (ChromaDB) is pre-loaded with three distinct types of unstructured data to demonstrate the ingestion pipeline's versatility:
+
+1. **Text Extraction:** A classic Paul Graham essay (`paul_graham_essay.txt`).
+2. **Web Scraping (Playwright):** Dynamic web content pulled directly from `quotes.toscrape.com`.
+3. **Complex PDF Parsing:** The seminal AI paper, *Attention Is All You Need* (`1706.03762v7.pdf`). 
+    * *Architecture Note:* The `pdf_ingestion` script features a custom upgrade that extracts and injects **contextual metadata** alongside the raw text before the chunking phase. This ensures the vector embeddings maintain structural awareness (such as document origin and surrounding context), significantly improving retrieval accuracy over naive text chunking.
+
+#### 🧪 Sample Prompts to Try
+To see how the RAG architecture retrieves the ingested context to ground the LLM's answers, try pasting these test prompts into the CLI:
+
+* **To test the PDF metadata pipeline:** 
+  > *"According to the 'Attention Is All You Need' paper, why is the Transformer architecture superior to recurrent neural networks?"*
+
+* **To test the raw text ingestion:** 
+  > *"What does Paul Graham say about the concept of wealth versus money?"*
+
+* **To test the web scraper:** 
+  > *"Find me a quote from Albert Einstein that was scraped from the database."*
+
+Watch the terminal output when you run these. You will see the engine successfully bypass its own training data hallucinations and ground its answers entirely in the local vector data you just ingested.
+
+### 🕷️ Closing Thoughts
+Building Tarantula has been an incredible deep dive into local AI architecture, spatial data constraints, and the nuances of custom data ingestion. The system as it stands is a robust proof-of-concept, but it is built on an architecture designed to scale into event-driven, multi-agent workflows. 
+
+Thank you for taking the time to review the architecture and run the system. Enjoy your new Tarantula, and happy querying!
+
+---
+
+## The Story of Tarantula: Introduction
 The software engineering market demands a complete reinvention of how we approach computing. After a major layoff from enterprise logistics giant Swift/Knight Transportation, I decided to channel my engineering background into solving the most critical bottleneck in modern tech: running high-performance AI locally, efficiently, and without massive cloud budgets.
 
 This repository documents the chronological evolution of a locally deployed AI system. It is a completely transparent, public "proof of work" chronicle. You will see the messy, raw architectures of the early "Infant" phases evolve step-by-step into a highly optimized, high-throughput "Terminator" system. 
