@@ -58,10 +58,10 @@ Once initialization is complete, Tarantula's vector database (ChromaDB) is pre-l
 To see how the RAG architecture retrieves the ingested context to ground the LLM's answers, try pasting these test prompts into the CLI:
 
 * **To test the PDF metadata pipeline:** 
-  > *"According to the 'Attention Is All You Need' paper, why is the Transformer architecture superior to recurrent neural networks?"*
+  > *"What is the exact difference in computational complexity per layer between self-attention layers and recurrent layers?"*
 
 * **To test the raw text ingestion:** 
-  > *"What does Paul Graham say about the concept of wealth versus money?"*
+  > *"Tell me about the Y Combinator"*
 
 * **To test the web scraper:** 
   > *"Find me a quote from Albert Einstein that was scraped from the database."*

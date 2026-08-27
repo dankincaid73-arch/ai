@@ -2,6 +2,10 @@
 
 All notable changes to **Project Tarantula V1.0** will be documented in this file.
 
+## [1.1.19] - 2026-08-26
+### Updated
+- **README Test Prompts:** Refined the curated sample queries for the Paul Graham essay and the *Attention Is All You Need* paper to provide more targeted, conceptual tests for the RAG retrieval pipeline.
+
 ## [1.1.18] - 2026-08-26
 ### Added
 - **Quick-Start Guide:** Added step-by-step instructions covering environment cloning, `.env` setup, Docker container orchestration, and CLI execution.
